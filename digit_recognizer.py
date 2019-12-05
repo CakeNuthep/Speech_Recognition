@@ -12,8 +12,8 @@ import warnings
 
 class digit_recognizer:
 
-    digit_directory = '/Users/milesporter/data-science/data-sets/free-spoken-digit-dataset/recordings'
-    test_directory = '/Users/milesporter/data-science/speech_recognition/data/digit_test_data'
+    digit_directory = './data/digits'
+    test_directory = './data/digit_test_data'
     nfft = 1203 # Number of FFTs
 
     def run(self):
@@ -26,7 +26,7 @@ class digit_recognizer:
         # Train HMM for each MFCC and add to training set
         for processed_file in processed_files:
             X = processed_file['feature']
-            hmm_trainer = HMMTrainer()
+            hmm_trainer = HMMTrainer(model_name='GMMHMM',n_mix=2)
             hmm_trainer.train(X)
             processed_file['hmm_trainer'] = hmm_trainer
 
@@ -38,7 +38,7 @@ class digit_recognizer:
             sampling_freq, audio = wavfile.read(filepath)
             test_features = mfcc(audio, sampling_freq, nfft = self.nfft)
             max_score = None
-
+            label = None
             for item in processed_files:
                 hmm_model = item['hmm_trainer']
 
@@ -53,14 +53,17 @@ class digit_recognizer:
 
     def process_directory(self):
         mfcc_features = list()
-        for filename in [x for x in os.listdir(self.digit_directory) if x.endswith('.wav')]:
+        for dirname in os.listdir(self.digit_directory):
+            # Get the name of the subfolder
+            subfolder = os.path.join(self.digit_directory, dirname)
+            for filename in [x for x in os.listdir(subfolder) if x.endswith('.wav')]:
 
-            # Read the input file
-            filepath = os.path.join(self.digit_directory, filename)
-            sampling_freq, audio = wavfile.read(filepath)
-            label = self.get_label(filename)
-            # Extract MFCC features and append to list
-            mfcc_features.append({"label": label, "mfcc":mfcc(audio, sampling_freq, nfft=self.nfft)})
+                # Read the input file
+                filepath = os.path.join(subfolder, filename)
+                sampling_freq, audio = wavfile.read(filepath)
+                label = self.get_label(filename)
+                # Extract MFCC features and append to list
+                mfcc_features.append({"label": label, "mfcc":mfcc(audio, sampling_freq, nfft=self.nfft)})
         return mfcc_features
 
 
