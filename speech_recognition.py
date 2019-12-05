@@ -19,7 +19,7 @@ def build_arg_parser():
 if __name__=='__main__':
     #args = build_arg_parser().parse_args()
     #input_folder = args.input_folder
-    input_folder = "./data"
+    input_folder = "./vowel_data"
     hmm_models = []
     # Parse the input directory
     for dirname in os.listdir(input_folder):
@@ -49,18 +49,25 @@ if __name__=='__main__':
                 # Append the label
                 y_words.append(label)
                 # Train and save HMM model
-                hmm_trainer = HMMTrainer(model_name='GMMHMM')
+                hmm_trainer = HMMTrainer(model_name='GMMHMM',n_mix=10)
                 hmm_trainer.train(X)
                 hmm_models.append((hmm_trainer, label))
                 hmm_trainer = None
 
-    # Test files
+    # # Test files
+    # input_files = [
+    #     'data/pineapple/pineapple15.wav',
+    #     'data/orange/orange15.wav',
+    #     'data/apple/apple15.wav',
+    #     'data/kiwi/kiwi15.wav'
+    # ]    # Classify input data
+
     input_files = [
-        'data/pineapple/pineapple15.wav',
-        'data/orange/orange15.wav',
-        'data/apple/apple15.wav',
-        'data/kiwi/kiwi15.wav'
+        'vowel_data/a/a_1.wav',
+        'vowel_data/e/e_2.wav',
+        'vowel_data/o/o_3.wav'
     ]    # Classify input data
+
     for input_file in input_files:
         # Read input file
         sampling_freq, audio = wavfile.read(input_file)
