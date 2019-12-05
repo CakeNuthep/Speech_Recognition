@@ -49,7 +49,7 @@ if __name__=='__main__':
                 # Append the label
                 y_words.append(label)
                 # Train and save HMM model
-                hmm_trainer = HMMTrainer()
+                hmm_trainer = HMMTrainer(model_name='GMMHMM')
                 hmm_trainer.train(X)
                 hmm_models.append((hmm_trainer, label))
                 hmm_trainer = None
